@@ -62,8 +62,27 @@ int main(void) {
         uint8_t mask = 24;
         assert(getSubnetCardinality(mask) == 254);
     }
-    
 
+    {
+        uint8_t mask = 30;
+        assert(getSubnetCardinality(mask) == 2);
+    }
+
+    {
+        uint8_t mask = 31;
+        assert(getSubnetCardinality(mask) == 2);
+    }
+
+    {
+        uint8_t mask = 32;
+        assert(getSubnetCardinality(mask) == 1);
+    }
+
+    {
+        uint8_t mask = 33;
+        assert(getSubnetCardinality(mask) == 0);
+    }
+    
     /* Q6 */
     {
         string networkID = "192.168.0.0";

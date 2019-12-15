@@ -67,7 +67,17 @@ void getNetworkID(const string ip, const string buffer) {
 }
 
 uint32_t getSubnetCardinality(uint8_t mask) {
-    return (1 << (MASK_MAX_LEN - mask)) - 2;
+    if (1 < mask && mask < 31) {
+        return (1 << (MASK_MAX_LEN - mask)) - 2;
+    } else if (mask == 31) {
+        // point-to-point link
+        return 2;
+    } else if (mask == 32) {
+        // host route
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 bool checkSubnetMembership(const string networkID, const string ip) {
