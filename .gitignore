@@ -1,0 +1,6 @@
+src/.gdb_history
+src/*.o
+src/*.so
+test/.gdb_history
+test/test
+test/*.so
