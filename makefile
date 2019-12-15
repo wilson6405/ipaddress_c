@@ -11,14 +11,14 @@ LDFALGS = -L$(SRC_PATH) -lipmath
 all: object library test
 
 object: 
-	$(CC) -fPIC -c $(SRC_PATH)/$(C_FILE) -o $(SRC_PATH)/$(OBJ_FILE)
+	$(CC) -fPIC -c -g $(SRC_PATH)/$(C_FILE) -o $(SRC_PATH)/$(OBJ_FILE)
 
 library: object
 	$(CC) -shared $(SRC_PATH)/$(OBJ_FILE) -o $(SRC_PATH)/$(LIBRARY_NAME)
 
 test: library
-	$(CC) $(TEST_PATH)/$(TEST_FILE) -o $(TEST_PATH)/$(basename $(TEST_FILE)) $(LDFALGS)
-	ln -s $(SRC_PATH)/$(LIBRARY_NAME) $(TEST_PATH)/$(LIBRARY_NAME)
+	$(CC) $(TEST_PATH)/$(TEST_FILE) -g -o $(TEST_PATH)/$(basename $(TEST_FILE)) $(LDFALGS)
+	ln -sf $(SRC_PATH)/$(LIBRARY_NAME) $(TEST_PATH)/$(LIBRARY_NAME)
 
 clean:
 	rm -f $(SRC_PATH)/$(LIBRARY_NAME) $(TEST_PATH)/$(LIBRARY_NAME) \

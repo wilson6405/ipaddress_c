@@ -7,9 +7,8 @@ int main(void) {
     // Test case 1
     {
         uint8_t ipBuffer[PREFIX_LEN + 1] = {0};
-        string ipAddress = "192.168.2.10";
-        uint8_t mask = 24;
-        getBroadcastAddress(ipAddress, mask, ipBuffer);
+        string ipAddress = "192.168.2.10/24";
+        getBroadcastAddress(ipAddress, ipBuffer);
         assert(strcmp(ipBuffer, "192.168.2.255") == 0);
     }
     
@@ -17,9 +16,8 @@ int main(void) {
     // Test case 2
     {
         uint8_t ipBuffer[PREFIX_LEN + 1] = {0};
-        string ipAddress = "10.1.23.10";
-        uint8_t mask = 20;
-        getBroadcastAddress(ipAddress, mask, ipBuffer);
+        string ipAddress = "10.1.23.10/20";
+        getBroadcastAddress(ipAddress, ipBuffer);
         assert(strcmp(ipBuffer, "10.1.31.255") == 0);
     }
     
@@ -53,9 +51,8 @@ int main(void) {
     /* Q4 */
     {
         uint8_t ipBuffer[PREFIX_LEN + 1] = {0};
-        string ipAddress = "192.168.2.10";
-        uint8_t mask = 20;
-        getNetworkID(ipAddress, mask, ipBuffer);
+        string ipAddress = "192.168.2.10/20";
+        getNetworkID(ipAddress, ipBuffer);
         assert(strcmp(ipBuffer, "192.168.0.0") == 0);
     }
     
@@ -70,9 +67,8 @@ int main(void) {
     /* Q6 */
     {
         string networkID = "192.168.0.0";
-        uint8_t mask = 24;
-        string checkIP = "192.168.0.13";
-        bool result = checkSubnetMembership(networkID, mask, checkIP);
+        string checkIP = "192.168.0.13/24";
+        bool result = checkSubnetMembership(networkID, checkIP);
         assert(result == true);
     }
     

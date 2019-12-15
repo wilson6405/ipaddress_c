@@ -1,46 +1,43 @@
 #include "ip_math.h"
 
-struct ipNotation {
+struct ipv4AddressFormat {
     uint8_t first;
     uint8_t second;
     uint8_t third;
     uint8_t fourth;
 };
 
+struct ipv4Notation {
+    union {
+        uint32_t numIP;
+        uint8_t strIP[PREFIX_LEN + 1];
+    };
+    union {
+        uint8_t numMask;
+        uint8_t strMask[PREFIX_LEN + 1];
+    };
+};
+
 uint32_t ipFormatToInteger(const string ip) {
-    uint8_t ipFormat[4] = {0};
-    
-	sscanf(ip, "%hhu.%hhu.%hhu.%hhu", 
-        ipFormat,
-	    ipFormat + 1,
-	    ipFormat + 2,
-	    ipFormat + 3);
-    
-    return (ipFormat[0] << 24) | (ipFormat[1] << 16) | (ipFormat[2] << 8) | ipFormat[3];
-    // ipNotation notation = {0};
+    ipv4AddressFormat format = {0};
 
-    // sscanf(ip, "%hhu.%hhu.%hhu.%hhu",
-    //     &notation.fourth,
-    //     &notation.third,
-    //     &notation.second,
-    //     &notation.first);
+    sscanf(ip, "%hhu.%hhu.%hhu.%hhu",
+        &format.fourth,
+        &format.third,
+        &format.second,
+        &format.first);
 
-    // return *(uint32_t *)&notation;
+    return *(uint32_t *)&format;
 }
 
 void integerToIPFormat(uint32_t ip, const string buffer) {
-    sprintf(buffer, "%u.%u.%u.%u", 
-            (ip & 0xff000000) >> 24,
-            (ip & 0xff0000) >> 16,
-            (ip & 0xff00) >> 8,
-            (ip & 0xff));
+    ipv4AddressFormat format = *(ipv4AddressFormat *)&ip;
 
-    // ipNotation notation = *(ipNotation *)&ip;
-    // sprintf(buffer, "%u.%u.%u.%u", 
-    //     notation.fourth,
-    //     notation.third,
-    //     notation.second,
-    //     notation.first);
+    sprintf(buffer, "%u.%u.%u.%u", 
+        format.fourth,
+        format.third,
+        format.second,
+        format.first);
 }
 
 uint32_t getNetworkMask(uint8_t mask) {
@@ -53,32 +50,44 @@ uint32_t getNetworkMask(uint8_t mask) {
     return networkMask;
 }
 
-void getNetworkID(const string ipAddress, uint8_t mask, const string buffer) {
-    integerToIPFormat(
-        (uint32_t)(ipFormatToInteger(ipAddress) & getNetworkMask(mask)),
-        buffer);
+ipv4Notation *parseIPv4address(const string ip) {
+    ipv4Notation *notation = (ipv4Notation *)malloc(sizeof(ipv4Notation));
+    sscanf(ip, "%[^/]/%hhu", notation->strIP, &notation->numMask);
+    return notation;
+}
+
+void getNetworkID(const string ip, const string buffer) {
+    ipv4Notation *notation = parseIPv4address(ip);
+    uint32_t integerIP = ipFormatToInteger(notation->strIP);
+    uint32_t networkMask = getNetworkMask(notation->numMask);
+    
+    integerToIPFormat(integerIP & networkMask, buffer);
+
+    free(notation);
 }
 
 uint32_t getSubnetCardinality(uint8_t mask) {
     return (1 << (MASK_MAX_LEN - mask)) - 2;
 }
 
-bool checkSubnetMembership(const string networkID, uint8_t mask, const string ip) {
-    uint8_t buffer[PREFIX_LEN] = {0};
-    getNetworkID(ip, mask, buffer);
+bool checkSubnetMembership(const string networkID, const string ip) {
+    uint8_t checkIP[PREFIX_LEN + 1] = {0};
+    getNetworkID(ip, checkIP);
 
-    if (strcmp(networkID, buffer) == 0) {
+    if (strcmp(networkID, checkIP) == 0) {
         return true;
     } else {
         return false;
     }
 }
 
-void getBroadcastAddress(string ipAddress, uint8_t mask, const string outputBuffer) {
-    uint32_t integerIP = ipFormatToInteger(ipAddress);
-    uint32_t networkMask = getNetworkMask(mask);
+void getBroadcastAddress(const string ip, const string outputBuffer) {
+    ipv4Notation *notation = parseIPv4address(ip); 
+    uint32_t integerIP = ipFormatToInteger(notation->strIP);
+    uint32_t networkMask = getNetworkMask(notation->numMask);
     uint32_t networkID = integerIP & networkMask;
     uint32_t broadcastIP = networkID | (~networkMask);
 
     integerToIPFormat(broadcastIP, outputBuffer);
+    free(notation);
 }

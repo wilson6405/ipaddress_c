@@ -8,12 +8,13 @@
 #define PREFIX_LEN 15
 #define MASK_MAX_LEN 32
 typedef unsigned char *string;
-typedef struct ipNotation ipNotation;
+typedef struct ipv4AddressFormat ipv4AddressFormat;
+typedef struct ipv4Notation ipv4Notation;
 
 uint32_t ipFormatToInteger(const string);
 void integerToIPFormat(uint32_t, const string);
 uint32_t getNetworkMask(uint8_t);
-void getBroadcastAddress(string, uint8_t, const string);
-void getNetworkID(const string, uint8_t, const string);
+void getBroadcastAddress(const string, const string);
+void getNetworkID(const string, const string);
 uint32_t getSubnetCardinality(uint8_t);
-bool checkSubnetMembership(const string, uint8_t, const string);
+bool checkSubnetMembership(const string, const string);
