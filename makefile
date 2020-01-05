@@ -4,6 +4,7 @@ C_FILE = ip_math.c
 OBJ_FILE = $(C_FILE:.c=.o)
 TEST_FILE = test.c
 LIBRARY_NAME = libipmath.so
+CFLAGS = -I$(SRC_PATH) -g 
 LDFALGS = -L$(SRC_PATH) -lipmath
 
 .PHONY: object library test
@@ -17,7 +18,7 @@ library: object
 	$(CC) -shared $(SRC_PATH)/$(OBJ_FILE) -o $(SRC_PATH)/$(LIBRARY_NAME)
 
 test: library
-	$(CC) $(TEST_PATH)/$(TEST_FILE) -g -o $(TEST_PATH)/$(basename $(TEST_FILE)) $(LDFALGS)
+	$(CC) $(TEST_PATH)/$(TEST_FILE) -o $(TEST_PATH)/$(basename $(TEST_FILE)) $(CFLAGS) $(LDFALGS)
 	ln -sf $(SRC_PATH)/$(LIBRARY_NAME) $(TEST_PATH)/$(LIBRARY_NAME)
 
 clean:

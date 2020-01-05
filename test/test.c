@@ -1,5 +1,5 @@
-#include "../src/ip_math.h"
-#include "assert.h"
+#include <ip_math.h>
+#include <assert.h>
 
 int main(void) {
     
