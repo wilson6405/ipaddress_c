@@ -101,3 +101,21 @@ void getBroadcastAddress(const string ip, const string outputBuffer) {
     integerToIPFormat(broadcastIP, outputBuffer);
     free(notation);
 }
+
+uint8_t **getHosts(const string ip, uint32_t *quanity) {
+    ipv4Notation *notation = parseIPv4address(ip);
+    *quanity = getSubnetCardinality(notation->numMask);
+    uint32_t startHost = ipFormatToInteger(notation->strIP);
+    uint8_t ipBuffer[PREFIX_LEN + 1] = {0};
+    uint8_t **hosts = (uint8_t **)malloc((*quanity) * sizeof(uint8_t *));
+    memset(hosts, 0, (*quanity) * sizeof(uint8_t *));
+
+    for (uint32_t hostIdx = 0; hostIdx < (*quanity); ++hostIdx) {
+        integerToIPFormat(startHost + hostIdx + 1, ipBuffer);
+        hosts[hostIdx] = (uint8_t *)malloc((PREFIX_LEN + 1) * sizeof(uint8_t));
+        strcpy(hosts[hostIdx], ipBuffer);
+    }
+
+    free(notation);
+    return hosts;
+}

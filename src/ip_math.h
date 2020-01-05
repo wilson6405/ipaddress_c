@@ -18,3 +18,4 @@ void getBroadcastAddress(const string, const string);
 void getNetworkID(const string, const string);
 uint32_t getSubnetCardinality(uint8_t);
 bool checkSubnetMembership(const string, const string);
+uint8_t **getHosts(const string, uint32_t *);

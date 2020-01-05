@@ -90,6 +90,27 @@ int main(void) {
         bool result = checkSubnetMembership(networkID, checkIP);
         assert(result == true);
     }
+
+    {
+        string ipNetwork = "192.0.2.0/29";
+        string testHosts[] = {
+            "192.0.2.1",
+            "192.0.2.2",
+            "192.0.2.3",
+            "192.0.2.4",
+            "192.0.2.5",
+            "192.0.2.6"
+        };
+        uint32_t quantity = 0;
+        uint8_t **hosts = getHosts(ipNetwork, &quantity);
+        
+        for (uint32_t idx = 0; idx < quantity; ++idx) {
+            assert(strcmp(testHosts[idx], hosts[idx]) == 0);
+            free(hosts[idx]);
+        }
+
+        free(hosts);
+    }
     
     printf("All pass!\n");
     return 0;
